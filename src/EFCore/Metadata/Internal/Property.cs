@@ -773,9 +773,11 @@ public class Property : PropertyBase, IMutableProperty, IConventionProperty, IPr
         }
 
         var property = this;
+        var visitedProperties = new HashSet<Property>();
         var i = 0;
         for (; i < ForeignKey.LongestFkChainAllowedLength; i++)
         {
+            visitedProperties.Add(property);
             Property? nextProperty = null;
             foreach (var foreignKey in property.GetContainingForeignKeys())
             {
@@ -784,8 +786,7 @@ public class Property : PropertyBase, IMutableProperty, IConventionProperty, IPr
                     if (property == foreignKey.Properties[propertyIndex])
                     {
                         var principalProperty = foreignKey.PrincipalKey.Properties[propertyIndex];
-                        if (principalProperty == this
-                            || principalProperty == property)
+                        if (visitedProperties.Contains(principalProperty))
                         {
                             break;
                         }
@@ -865,9 +866,11 @@ public class Property : PropertyBase, IMutableProperty, IConventionProperty, IPr
         }
 
         var property = this;
+        var visitedProperties = new HashSet<Property>();
         var i = 0;
         for (; i < ForeignKey.LongestFkChainAllowedLength; i++)
         {
+            visitedProperties.Add(property);
             Property? nextProperty = null;
             foreach (var foreignKey in property.GetContainingForeignKeys())
             {
@@ -876,8 +879,7 @@ public class Property : PropertyBase, IMutableProperty, IConventionProperty, IPr
                     if (property == foreignKey.Properties[propertyIndex])
                     {
                         var principalProperty = foreignKey.PrincipalKey.Properties[propertyIndex];
-                        if (principalProperty == this
-                            || principalProperty == property)
+                        if (visitedProperties.Contains(principalProperty))
                         {
                             break;
                         }

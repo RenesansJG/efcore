@@ -1004,9 +1004,11 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
         }
 
         var principalProperty = property;
+        var visitedProperties = new HashSet<IProperty>();
         var i = 0;
         for (; i < ForeignKey.LongestFkChainAllowedLength; i++)
         {
+            visitedProperties.Add(principalProperty);
             IProperty? nextProperty = null;
             foreach (var foreignKey in principalProperty.GetContainingForeignKeys())
             {
@@ -1015,8 +1017,7 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
                     if (principalProperty == foreignKey.Properties[propertyIndex])
                     {
                         var newPrincipalProperty = foreignKey.PrincipalKey.Properties[propertyIndex];
-                        if (newPrincipalProperty == property
-                            || newPrincipalProperty == principalProperty)
+                        if (visitedProperties.Contains(newPrincipalProperty))
                         {
                             break;
                         }
